@@ -1,5 +1,5 @@
 {
-  "name": "@org/release-assistant",
+  "name": "org-npm-release-assistant",
   "version": "1.0.0",
   "description": "A release assistant for the NPM Release Notes.",
   "main": "index.js",

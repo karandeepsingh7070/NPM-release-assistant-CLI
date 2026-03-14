@@ -15,13 +15,13 @@ A CLI release assistant that collects release metadata, reads git commits, and a
 Install as an npm package:
 
 ```bash
-npm install @org/release-assistant
+npm install org-npm-release-assistant
 ```
 
 Global install (optional):
 
 ```bash
-npm install -g @org/release-assistant
+npm install -g org-npm-release-assistant
 ```
 
 ## Usage
@@ -52,10 +52,10 @@ The tool:
 2. Reads author from `git config user.name`
 3. Gets commits since last git tag (or last 10 commits if no tag exists)
 4. Groups commits by prefix:
-   - `feat:` -> Features
-   - `fix:` -> Fixes
-   - `chore:` -> Chores
-   - everything else -> Others
+  - `feat:` -> Features
+  - `fix:` -> Fixes
+  - `chore:` -> Chores
+  - everything else -> Others
 5. Appends a new entry to `CHANGELOG.md`
 6. Runs `git add CHANGELOG.md`
 
@@ -109,3 +109,4 @@ release-assistant
 
 - `CHANGELOG.md` is created automatically if it does not exist.
 - Commit grouping works best when using conventional commit prefixes (`feat:`, `fix:`, `chore:`).
+
