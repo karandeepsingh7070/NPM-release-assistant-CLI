@@ -40,12 +40,6 @@ async function run() {
     ...answers
   };
 
-  fs.appendFileSync(
-    "release-log.json",
-    JSON.stringify(metadata) + "\n"
-  );
-
-
   const commits = getCommitsSinceLastTag();
   const groups = groupCommits(commits);
   const entry = generateMarkdown(metadata, groups)
