@@ -2,6 +2,8 @@
 import inquirer from "inquirer";
 import { execSync } from "child_process";
 import fs from "fs";
+import { getCommitsSinceLastTag, groupCommits, generateMarkdown } from "./git-helper";
+import { updateChangelog } from "./changelog-generator";
 
 async function run() {
 
@@ -42,6 +44,14 @@ async function run() {
     "release-log.json",
     JSON.stringify(metadata) + "\n"
   );
+
+
+  const commits = getCommitsSinceLastTag();
+  const groups = groupCommits(commits);
+  const entry = generateMarkdown(metadata, groups)
+  updateChangelog(entry);
+
+  execSync(`git add CHANGELOG.md`)
 
   console.log("Release metadata saved.");
 }
