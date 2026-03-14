@@ -1,0 +1,27 @@
+{
+  "name": "@org/release-assistant",
+  "version": "1.0.0",
+  "description": "A release assistant for the NPM Release Notes.",
+  "main": "index.js",
+  "bin": {
+    "release-assistant": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Karandeep Singh",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "execa": "^9.6.1",
+    "inquirer": "^13.3.0",
+    "ora": "^9.3.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
