@@ -1,11 +1,25 @@
 import fs from "fs"
+import path from "path"
+import { execSync } from "child_process"
 
-function updateChangelog(entry: string) {
+function getRepoRoot() {
+  try {
+    return execSync("git rev-parse --show-toplevel")
+      .toString()
+      .trim()
+  } catch {
+    return process.cwd()
+  }
+}
 
-  const file = "CHANGELOG.md"
+export function updateChangelog(entry: string) {
+
+  const repoRoot = getRepoRoot()
+
+  const file = path.join(repoRoot, "CHANGELOG.md")
 
   if (!fs.existsSync(file)) {
-    fs.writeFileSync(file, "# Changelog\n")
+    fs.writeFileSync(file, "# Changelog\n\n")
   }
 
   const existing = fs.readFileSync(file, "utf-8")
@@ -14,5 +28,3 @@ function updateChangelog(entry: string) {
 
   fs.writeFileSync(file, updated)
 }
-
-export { updateChangelog }
