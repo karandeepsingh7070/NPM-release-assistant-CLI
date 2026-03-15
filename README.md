@@ -1,4 +1,4 @@
-# @org/release-assistant
+# org-npm-release-assistant
 
 A CLI release assistant that collects release metadata, reads git commits, and appends a formatted entry to `CHANGELOG.md`.
 
