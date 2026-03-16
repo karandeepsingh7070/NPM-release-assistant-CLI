@@ -17,17 +17,21 @@ export function getPackageInfo() {
   const pkgPath = path.join(cwd, "package.json")
 
   const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
+  
+  const repoRoot = getRepoRoot()
+  let sourcePath = repoRoot
 
-  let sourceDir = cwd
+  const distPkg = getDistPackageName(cwd)
 
-  if (cwd.includes("/dist/")) {
-    sourceDir = cwd.split("/dist/")[0]
+  if (distPkg) {
+    const found = findPackageDir(repoRoot, distPkg)
+    sourcePath = found
   }
 
   return {
     name: pkg.name,
     version: pkg.version,
-    dir: sourceDir
+    dir: sourcePath
   }
 }
 

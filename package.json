@@ -1,6 +1,6 @@
 {
   "name": "org-npm-release-assistant",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "A release assistant for the NPM Release Notes.",
   "main": "index.js",
   "bin": {
