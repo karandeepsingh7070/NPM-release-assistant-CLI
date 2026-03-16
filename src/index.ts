@@ -86,6 +86,7 @@ async function run() {
 
   try {
     execSync("git add CHANGELOG.md");
+    execSync(`git tag ${pkg.name}-${pkg.version}`)
   } catch {
     console.warn("Warning: Could not stage CHANGELOG.md.");
   }
