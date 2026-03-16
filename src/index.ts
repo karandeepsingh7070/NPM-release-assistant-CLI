@@ -2,8 +2,8 @@
 import inquirer from "inquirer";
 import { execSync } from "child_process";
 import fs from "fs";
-import { getCommitsSinceLastTag, groupCommits, generateMarkdown } from "./git-helper";
-import { updateChangelog } from "./changelog-generator";
+import { groupCommits, generateMarkdown, getPackageCommits } from "./git-helper";
+import { createTag, getPackageInfo, updateChangelog } from "./changelog-generator";
 
 type PromptAnswers = {
   type: string;
@@ -37,7 +37,7 @@ async function run() {
     console.warn("Warning: Could not read git user.name; using 'Unknown'.");
   }
 
-  const pkg = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+  const pkg = getPackageInfo();
 
   let answers: PromptAnswers;
   try {
@@ -75,18 +75,21 @@ async function run() {
     ...answers
   };
 
-  const commits = getCommitsSinceLastTag();
+  console.log("dir2", pkg.dir)
+  const commits = getPackageCommits(pkg.dir);
   if (commits.length === 0) {
     console.warn("Warning: No git commits found (or git command failed).");
   }
 
   const groups = groupCommits(commits);
   const entry = generateMarkdown(metadata, groups)
+  // getLastPackageTag
   updateChangelog(entry);
 
   try {
     execSync("git add CHANGELOG.md");
-    execSync(`git tag ${pkg.name}-${pkg.version}`)
+    createTag(pkg.name, pkg.version)
+    // copy changlog md from root to dist
   } catch {
     console.warn("Warning: Could not stage CHANGELOG.md.");
   }

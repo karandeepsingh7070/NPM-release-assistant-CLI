@@ -17,37 +17,76 @@ type ReleaseMetadata = {
   notes?: string;
 };
 
-function getLastTag() {
-    try {
-      return execSync("git describe --tags --abbrev=0")
+// function getLastTag() {
+//     try {
+//       return execSync("git describe --tags --abbrev=0")
+//         .toString()
+//         .trim()
+//     } catch {
+//       return null
+//     }
+//   }
+
+
+
+  function getPackageCommits(packageDir: string) {
+
+    try{
+      const lastTag = getLastPackageTag(packageDir) 
+      const range = lastTag ? `${lastTag}..HEAD` : ""
+  
+      const commits = execSync(
+        `git log ${range} --pretty=format:"%s" -- ${packageDir}`
+      )
         .toString()
-        .trim()
+        .split("\n")
+        .filter(Boolean)
+      console.log("commits2", commits)
+      return commits
+    }
+    catch {
+      return []
+    }
+  }
+
+  function getLastPackageTag(pkgName: string) {
+
+    try {
+      const tags = execSync("git tag")
+        .toString()
+        .split("\n")
+  
+      const packageTags = tags
+        .filter(t => t.startsWith(`${pkgName}@`))
+        .sort()
+  
+      return packageTags[packageTags.length - 1] || null
     } catch {
       return null
     }
   }
 
-  function getCommitsSinceLastTag(): string[] {
-    try {
-      const lastTag = getLastTag()
+  // function getCommitsSinceLastTag(): string[] {
+  //   try {
+  //     const lastTag = getLastTag()
     
-      if (!lastTag) {
-        return execSync("git log --pretty=format:'%h %s (%an)' -10")
-          .toString()
-          .split("\n")
-          .filter(Boolean)
-      }
+  //     if (!lastTag) {
+  //       return execSync("git log --pretty=format:'%h %s (%an)' -10")
+  //         .toString()
+  //         .split("\n")
+  //         .filter(Boolean)
+  //     }
     
-      return execSync(
-        `git log ${lastTag}..HEAD --pretty=format:'%h %s (%an)'`
-      )
-        .toString()
-        .split("\n")
-        .filter(Boolean)
-    } catch {
-      return []
-    }
-  }
+  //     return execSync(
+  //       `git log ${lastTag}..HEAD --pretty=format:'%h %s (%an)'`
+  //     )
+  //       .toString()
+  //       .split("\n")
+  //       .filter(Boolean)
+  //   } catch {
+  //     return []
+  //   }
+  // }
 
 function groupCommits(commits: string[]): CommitGroups {
 
@@ -112,4 +151,4 @@ function groupCommits(commits: string[]): CommitGroups {
     
     return md
   }
-  export { getCommitsSinceLastTag, groupCommits, generateMarkdown }
+  export { groupCommits, generateMarkdown, getPackageCommits, getLastPackageTag }
