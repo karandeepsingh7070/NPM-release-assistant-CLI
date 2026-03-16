@@ -52,28 +52,6 @@ type ReleaseMetadata = {
     }
   }
 
-  // function getCommitsSinceLastTag(): string[] {
-  //   try {
-  //     const lastTag = getLastTag()
-    
-  //     if (!lastTag) {
-  //       return execSync("git log --pretty=format:'%h %s (%an)' -10")
-  //         .toString()
-  //         .split("\n")
-  //         .filter(Boolean)
-  //     }
-    
-  //     return execSync(
-  //       `git log ${lastTag}..HEAD --pretty=format:'%h %s (%an)'`
-  //     )
-  //       .toString()
-  //       .split("\n")
-  //       .filter(Boolean)
-  //   } catch {
-  //     return []
-  //   }
-  // }
-
 function groupCommits(commits: string[]): CommitGroups {
 
     const groups: CommitGroups = {

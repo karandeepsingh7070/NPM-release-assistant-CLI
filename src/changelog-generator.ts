@@ -12,48 +12,75 @@ function getRepoRoot() {
   }
 }
 
+
+function getPackageShortName(pkgName: string) {
+  return pkgName.split("/").pop() || pkgName
+}
+
 export function getPackageInfo() {
   const cwd = process.cwd()
   const pkgPath = path.join(cwd, "package.json")
 
   const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"))
-  
+
   const repoRoot = getRepoRoot()
-  let sourcePath = repoRoot
 
-  const distPkg = getDistPackageName(cwd)
-
-  if (distPkg) {
-    const found = findPackageDir(repoRoot, distPkg)
-    sourcePath = found
-  }
+  const pkgShortName = getPackageShortName(pkg.name)
+  const changelogDir = findPackageDir(repoRoot, pkgShortName)
 
   return {
     name: pkg.name,
     version: pkg.version,
-    dir: sourcePath
+    dir: changelogDir
   }
 }
 
-function getDistPackageName(cwd: string) {
-  if (!cwd.includes("/dist/")) return null
+function findPackageDir(repoRoot: string, packageName: string): string {
+  const targetShortName = getPackageShortName(packageName)
 
-  const parts = cwd.split("/dist/")[1].split("/").filter(Boolean)
+  const stack = [repoRoot]
 
-  if (parts.length === 0) return null
+  while (stack.length) {
 
-  return parts[parts.length - 1]
-}
+    const current = stack.pop()!
 
-function findPackageDir(repoRoot: string, pkgFolder: string) {
-  const directPath = path.join(repoRoot, pkgFolder)
+    const files = fs.readdirSync(current, { withFileTypes: true })
 
-  if (fs.existsSync(directPath)) return directPath
+    for (const file of files) {
 
-  const packagesPath = path.join(repoRoot, "packages", pkgFolder)
+      const fullPath = path.join(current, file.name)
 
-  if (fs.existsSync(packagesPath)) return packagesPath
+      if (file.isDirectory()) {
 
+        // skip heavy folders
+        if (["node_modules", ".git", "dist", "build"].includes(file.name)) {
+          continue
+        }
+
+        stack.push(fullPath)
+
+      } else if (file.name === "package.json") {
+        console.log("found package.json at:", fullPath)
+        try {
+          const pkg = JSON.parse(fs.readFileSync(fullPath, "utf-8"))
+          const pkgFullName = typeof pkg.name === "string" ? pkg.name : ""
+          const pkgShortName = getPackageShortName(pkgFullName)
+
+          if (
+            pkgFullName === packageName ||
+            pkgShortName === packageName ||
+            pkgShortName === targetShortName
+          ) {
+            console.log("found package at:", current)
+            return current
+          }
+
+        } catch {
+        }
+      }
+    }
+  }
+  console.log("no package found", packageName)
   return repoRoot
 }
 
@@ -65,19 +92,8 @@ export function createTag(pkgName: string, version: string) {
 
 export function updateChangelog(entry: string) {
 
-  const repoRoot = getRepoRoot()
-  const cwd = process.cwd()
-
-  const distPkg = getDistPackageName(cwd)
-
-  let changelogDir = repoRoot
-
-  if (distPkg) {
-    const found = findPackageDir(repoRoot, distPkg)
-    changelogDir = found
-  }
-
-  const changelogPath = path.join(changelogDir, "CHANGELOG.md")
+  const pkg = getPackageInfo()
+  const changelogPath = path.join(pkg.dir, "CHANGELOG.md")
 
   if (!fs.existsSync(changelogPath)) {
     fs.writeFileSync(changelogPath, "# Changelog\n\n")
