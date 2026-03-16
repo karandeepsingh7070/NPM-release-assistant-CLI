@@ -75,21 +75,18 @@ async function run() {
     ...answers
   };
 
-  console.log("dir2", pkg.dir)
-  const commits = getPackageCommits(pkg.dir);
+  const commits = getPackageCommits(pkg.name, pkg.dir);
   if (commits.length === 0) {
-    console.warn("Warning: No git commits found (or git command failed).");
+    console.warn("Warning: No commits detected since last release.");
   }
 
   const groups = groupCommits(commits);
   const entry = generateMarkdown(metadata, groups)
-  // getLastPackageTag
   updateChangelog(entry);
 
   try {
     execSync("git add CHANGELOG.md");
     createTag(pkg.name, pkg.version)
-    // copy changlog md from root to dist
   } catch {
     console.warn("Warning: Could not stage CHANGELOG.md.");
   }

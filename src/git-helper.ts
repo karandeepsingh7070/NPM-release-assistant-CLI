@@ -17,22 +17,10 @@ type ReleaseMetadata = {
   notes?: string;
 };
 
-// function getLastTag() {
-//     try {
-//       return execSync("git describe --tags --abbrev=0")
-//         .toString()
-//         .trim()
-//     } catch {
-//       return null
-//     }
-//   }
-
-
-
-  function getPackageCommits(packageDir: string) {
+  function getPackageCommits(pkgName: string, packageDir: string) {
 
     try{
-      const lastTag = getLastPackageTag(packageDir) 
+      const lastTag = getLastPackageTag(pkgName)
       const range = lastTag ? `${lastTag}..HEAD` : ""
   
       const commits = execSync(
@@ -41,7 +29,7 @@ type ReleaseMetadata = {
         .toString()
         .split("\n")
         .filter(Boolean)
-      console.log("commits2", commits)
+      console.log("commits", commits)
       return commits
     }
     catch {
@@ -52,15 +40,13 @@ type ReleaseMetadata = {
   function getLastPackageTag(pkgName: string) {
 
     try {
-      const tags = execSync("git tag")
+      const tags = execSync("git tag --sort=-creatordate")
         .toString()
         .split("\n")
   
-      const packageTags = tags
-        .filter(t => t.startsWith(`${pkgName}@`))
-        .sort()
+      const packageTags = tags.filter(t => t.startsWith(`${pkgName}@`))
   
-      return packageTags[packageTags.length - 1] || null
+      return packageTags[0] || null
     } catch {
       return null
     }
