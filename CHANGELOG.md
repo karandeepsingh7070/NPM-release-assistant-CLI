@@ -59,3 +59,14 @@ Type: Feature
 
 ### Summary
 wer
+
+## 1.0.15 (2026-03-17)
+
+Author: karandeepsingh7070
+Type: Enhancement
+
+### Summary
+Support for filtered commits
+
+### Others
+- Enhancement: Package names based monorepo support

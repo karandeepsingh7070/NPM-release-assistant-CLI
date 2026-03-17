@@ -62,6 +62,8 @@ function groupCommits(commits: string[]): CommitGroups {
     }
   
     for (const commit of commits) {
+      if (/^Merge (pull request|branch)\b/.test(commit))
+        continue
   
       if (commit.startsWith("feat:"))
         groups.features.push(commit.replace("feat:", "").trim())
