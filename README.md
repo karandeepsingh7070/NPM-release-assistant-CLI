@@ -9,6 +9,7 @@ A CLI release assistant that collects release metadata, reads git commits, and a
 - Commit grouping from git history (`feat:`, `fix:`, `chore:`, plus others)
 - Markdown changelog entry generation
 - Auto-stages `CHANGELOG.md` with `git add CHANGELOG.md`
+- Monorepo supported
 
 ## Installation
 
